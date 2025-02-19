@@ -30,12 +30,24 @@ jobs:
             firmware/build/firmware.elf
           if-no-files-found: error
 
-      - name: firmware release
+      - name: rename and checksum firmware
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          cd firmware/build
+          sudo install -d -o "$USER" release
+          cd release
+          cp -v "../firmware.bin" "roomsense_${{ github.ref_name }}.bin"
+          cp -v "../firmware.elf" "roomsense_${{ github.ref_name }}.elf"
+          sha256sum *.bin *.elf > SHA256SUMS.txt
+
+      - name: publish firmware release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           draft: true
           preserve_order: true
+          fail_on_unmatched_files: true
           files: |
-            firmware/build/firmware.bin
-            firmware/build/firmware.elf
+            firmware/build/release/*.bin
+            firmware/build/release/*.elf
+            firmware/build/release/*.txt
