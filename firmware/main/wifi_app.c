@@ -256,7 +256,10 @@ static void wifi_app_soft_ap_config(void)
 	ESP_ERROR_CHECK_WITHOUT_ABORT(esp_netif_set_ip_info(esp_netif_ap, &ap_ip_info));			///> Statically configure the network interface
 	ESP_ERROR_CHECK_WITHOUT_ABORT(esp_netif_dhcps_start(esp_netif_ap));						///> Start the AP DHCP server (for connecting stations e.g. your mobile device)
 
-	ESP_ERROR_CHECK_WITHOUT_ABORT(esp_wifi_set_mode(WIFI_MODE_APSTA));						///> Setting the mode as Access Point / Station Mode
+	// BH disable station+softAP mode, set AP mode only after connect
+	// WIFI_MODE_STA,       /**< WiFi station mode */
+	// WIFI_MODE_APSTA,     /**< WiFi station + soft-AP mode */
+	ESP_ERROR_CHECK_WITHOUT_ABORT(esp_wifi_set_mode(WIFI_MODE_STA));						///> Setting the mode as Access Point / Station Mode
 	ESP_ERROR_CHECK_WITHOUT_ABORT(esp_wifi_set_config(ESP_IF_WIFI_AP, &ap_config));			///> Set our configuration
 	ESP_ERROR_CHECK_WITHOUT_ABORT(esp_wifi_set_bandwidth(WIFI_IF_AP, WIFI_AP_BANDWIDTH));		///> Our default bandwidth 20 MHz
 	ESP_ERROR_CHECK_WITHOUT_ABORT(esp_wifi_set_ps(WIFI_STA_POWER_SAVE));						///> Power save set to "NONE"
